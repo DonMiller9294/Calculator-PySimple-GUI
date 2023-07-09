@@ -1,0 +1,51 @@
+import PySimpleGUI as sg
+
+def main():
+    # Define the layout of the calculator GUI
+    layout = [
+        [sg.Input(size=(20, 1), key='-DISPLAY-', justification='right')],
+        [sg.Button('1'), sg.Button('2'), sg.Button('3'), sg.Button('+')],
+        [sg.Button('4'), sg.Button('5'), sg.Button('6'), sg.Button('-')],
+        [sg.Button('7'), sg.Button('8'), sg.Button('9'), sg.Button('*')],
+        [sg.Button('0'), sg.Button('C'), sg.Button('='), sg.Button('/')]
+    ]
+
+    # Create the window
+    window = sg.Window('Simple Calculator', layout, return_keyboard_events=True)
+
+    # Event loop
+    while True:
+        event, values = window.read()
+
+        # Break the event loop if the window is closed
+        if event == sg.WINDOW_CLOSED:
+            break
+
+        handle_event(event, window)
+
+    # Close the window
+    window.close()
+
+def handle_event(event, window):
+    current_value = window['-DISPLAY-'].get()
+
+    if event.isdigit():  # If a digit button is clicked
+        current_value += event
+
+    elif event in ('+', '-', '*', '/'):  # If an operator button is clicked
+        current_value += event
+
+    elif event == '=':  # If the equal button is clicked
+        try:
+            current_value = str(eval(current_value))
+        except (SyntaxError, ZeroDivisionError):
+            current_value = 'ERROR'
+
+    elif event == 'C':  # If the clear button is clicked
+        current_value = ''
+
+    # Update the display
+    window['-DISPLAY-'].update(current_value)
+
+if __name__ == '__main__':
+    main()
